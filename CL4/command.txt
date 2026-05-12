@@ -1,0 +1,44 @@
+================
+NOTE: Everything to be ran on Admin Command Prompt. Make sure there are no spaces in path from where you are executing the commands.
+College PC Admin password: P3dyp#2981
+SETUP FILES: https://transfer.it/t/nhW1Clo3SBbL
+================
+
+# First time only
+hadoop namenode -format
+
+# start Hadoop
+start-dfs.cmd
+start-yarn.cmd
+
+# check with
+jps
+
+5472 DataNode
+26564 Jps
+5012 ResourceManager
+24696 NameNode
+12012 NodeManager
+
+# Create folder to store input files
+hdfs dfs -mkdir -p /user/myfiles
+hdfs dfs -put <file_name> /user/myfiles/<file_name>
+hdfs dfs -ls /user/myfiles
+
+# cd to script location (where mapper.py and reducer.py are located)
+
+# Grant Permissions
+icacls mapper.py /grant %USERNAME%:R
+icacls reducer.py /grant %USERNAME%:R
+
+# OR icacls *.py /grant %USERNAME%:R for multiple files at once
+
+# Replace D:\Coding\hadoop with Hadoop Installation path (optimally should be C:\hadoop)
+hadoop jar D:\Coding\hadoop\share\hadoop\tools\lib\hadoop-streaming-*.jar -input /user/myfiles/<input_file> -output /user/output -mapper "python mapper.py" -reducer "python reducer.py" -file mapper.py -file reducer.py
+
+hdfs dfs -cat /user/output/part-00000
+
+----------------
+
+# Before re-running, clear output folder
+hdfs dfs -rm -r /user/output
